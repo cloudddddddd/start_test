@@ -1,0 +1,117 @@
+# Импорт и инитилизация pygame
+import pygame
+from random import randint
+pygame.init()
+
+# Высота и ширина окна
+mw_w = 700
+mw_h = 500
+
+# Создвние игрового окна
+mw = pygame.display.set_mode((mw_w, mw_h))
+
+clock = pygame.time.Clock()
+
+# monsters = pygame.sprite.Group()
+
+
+
+# Загрузка файлов  задний фон и музыка
+background_image = pygame.transform.scale(
+    pygame.image.load('galaxy.jpg'), (mw_w, mw_h)
+)
+pygame.mixer.music.load('space.ogg')
+
+# класс родитель GameSprite
+class GameSprite(pygame.sprite.Sprite):
+
+    def __init__(self, img, speed, x,y):
+        super().__init__()
+        self.speed = speed
+        self.img = pygame.transform.scale(
+            pygame.image.load(img), (65,65)
+        )
+        self.rect = self.img.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        
+    # Метод который отображает объект на экране
+    def reset(self):
+        mw.blit(self.img, (self.rect.x, self.rect.y))
+
+# Класс Player (игрок)
+class Player(GameSprite):
+    # Метод который отвечает за перемещение игрока по координате x
+    def movement(self):
+    
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and self.rect.x > 5:
+            self.rect.x -= self.speed  
+        if keys[pygame.K_RIGHT] and self.rect.x < mw_w - 80:
+            self.rect.x += self.speed
+    
+    # Метод который отвечает за выстрел
+    def fire(self):
+        pass
+
+# Класс Enemy (враг)
+class Enemy(GameSprite):
+
+    # (Буду переделывать) метод отвечающий за движение монстров
+    def enemy_movent(self):
+        
+        
+
+        if self.rect.y < 650:
+
+            self.rect.y += self.speed 
+
+        else:
+
+
+            self.rect.x = randint(50, 650)
+
+            self.rect.y = 10
+            #scoreMiss += 1
+
+
+# Создаем* игрока 
+username = Player('rocket.png', 2, 300 ,250)
+
+# Создаем группу монстров
+monters = pygame.sprite.Group()
+
+# Добавляем 5 монстров в группу
+for i in range(5):
+    # Создание* монстра
+    monster1 = Enemy('ufo.png', 10,  randint(50, 650), randint(1, 2))
+
+    monters.add(monster1)
+
+# pygame.mixer.music.play()
+
+game = True
+
+# Игровой цикл
+while game:
+    # Устанавливаем FPS     
+    clock.tick(60)
+    # Если нажат крестик то программа завершается
+    for e in pygame.event.get():
+        if e.type == pygame.QUIT:
+           game = False 
+
+    # отображаем задний фон 
+    mw.blit(background_image, (0, 0))
+    
+    # Отображение и движение игрока 
+    username.reset()
+    username.movement()
+    
+    # monters.draw(mw)
+    # monters.update()
+    
+    # Обновляем экран
+    pygame.display.update()
+    
+    
